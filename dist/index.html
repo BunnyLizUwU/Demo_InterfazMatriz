@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KOSTAL HMI Dashboard Prototipo</title>
+  <!-- Google Fonts - Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap"
+    rel="stylesheet">
+  <!-- Stylesheets -->
+  <script type="module" crossorigin src="/assets/index-CYLceVg6.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-DXdZwvO7.css">
+</head>
+
+<body>
+  <div id="app">
+    <!-- ========================================================== -->
+    <!-- 1. PANTALLA DE LOGIN                                       -->
+    <!-- ========================================================== -->
+    <section id="screen-login" class="screen active">
+      <div class="login-container">
+        <!-- Logo KOSTAL -->
+        <div class="login-header">
+          <img src="/assets/LogoKostal-CsdGwbEW.webp" alt="KOSTAL Logo" class="login-logo-kostal">
+          <h1 data-i18n="system_title" id="login-system-title">SISTEMA HMI DE INSPECCIÓN</h1>
+          <p class="login-subtitle" data-i18n="system_subtitle" id="login-station-desc">Línea de Ensamblado & Calidad KOSTAL</p>
+        </div>
+
+        <!-- Formulario -->
+        <form id="login-form" class="login-form" onsubmit="return false;">
+          <div class="form-group">
+            <label for="login-user" data-i18n="label_user">Usuario</label>
+            <div class="input-wrapper">
+              <i data-lucide="user" class="input-icon"></i>
+              <input type="text" id="login-user" placeholder="Escribe tu usuario..." required autocomplete="username">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="login-pass" data-i18n="label_pass">Contraseña</label>
+            <div class="input-wrapper">
+              <i data-lucide="lock" class="input-icon"></i>
+              <input type="password" id="login-pass" placeholder="••••••••" required autocomplete="current-password">
+            </div>
+          </div>
+
+          <button type="submit" id="btn-login" class="btn-primary" data-i18n="btn_login">
+            <span>Iniciar Sesión</span>
+            <i data-lucide="log-in"></i>
+          </button>
+        </form>
+
+        <!-- Accesos directos para la DEMO -->
+        <div class="demo-login-box">
+          <p data-i18n="demo_login_title">Accesos Directos de Simulación (DEMO):</p>
+          <div class="demo-buttons">
+            <button type="button" class="btn-demo" id="btn-demo-operator">
+              <i data-lucide="user-cog"></i>
+              <span>Juan Pérez (OPERADOR)</span>
+            </button>
+            <button type="button" class="btn-demo" id="btn-demo-admin">
+              <i data-lucide="shield-check"></i>
+              <span>Carlos H. (ADMIN)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Logo Baluarte al pie del login -->
+        <div class="login-footer">
+          <span data-i18n="developed_by">Desarrollado en alianza con</span>
+          <img src="/assets/LOGO_BALUARTE-xS99IQah.png" alt="Baluarte Logo" class="login-logo-baluarte">
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================== -->
+    <!-- 2. ROL OPERADOR - PANTALLA PRINCIPAL                       -->
+    <!-- ========================================================== -->
+    <section id="screen-operator" class="screen">
+      <main class="op-grid-layout">
+        <!-- ========================================== -->
+        <!-- 1. COLUMNA IZQUIERDA                       -->
+        <!-- ========================================== -->
+        <div class="op-col op-col-left">
+          <!-- Logo Kostal -->
+          <div class="hmi-card op-card-logo flex-center">
+            <img src="/assets/LogoKostal-CsdGwbEW.webp" alt="KOSTAL Logo" class="op-left-logo-kostal">
+            <span class="op-station-tag" id="op-station-tag">EST-KOSTAL-04</span>
+          </div>
+
+          <!-- Información de proceso -->
+          <div class="hmi-card op-card-process flex-1">
+            <div class="card-header-inner">
+              <i data-lucide="info" class="card-icon-sm blue"></i>
+              <span class="card-title-sm" data-i18n="process_info_title">Información de proceso</span>
+            </div>
+            <div class="card-body-inner">
+              <div class="info-row-sm">
+                <span class="info-label-sm" data-i18n="recipe_select_label">Receta Activa:</span>
+                <select id="op-recipe-select" class="op-recipe-dropdown">
+                  <!-- Filled dynamically by JS -->
+                </select>
+              </div>
+              <div class="info-row-sm">
+                <span class="info-label-sm" data-i18n="model_label">Modelo:</span>
+                <span class="info-value-sm text-bold text-highlight" id="op-active-model">KSL-001</span>
+              </div>
+              <div class="info-row-sm">
+                <span class="info-label-sm" data-i18n="program_label">Programa:</span>
+                <span class="info-value-sm font-mono" id="op-active-program">P01</span>
+              </div>
+              <div class="info-row-sm">
+                <span class="info-label-sm" data-i18n="matrix_label">Matriz Fixture:</span>
+                <span class="info-value-sm font-mono" id="op-active-matrix">3 × 5</span>
+              </div>
+              <div class="info-row-sm">
+                <span class="info-label-sm" data-i18n="scheduled_label">Piezas Programadas:</span>
+                <span class="info-value-sm font-mono" id="op-scheduled-pieces">15</span>
+              </div>
+              <div class="info-row-sm">
+                <span class="info-label-sm" data-i18n="completed_label">Piezas Realizadas:</span>
+                <span class="info-value-sm font-mono text-bold" id="op-progress-text">08 / 15</span>
+              </div>
+              <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="op-progress-bar" style="width: 53.3%;"></div>
+              </div>
+              <div class="divider"></div>
+              <div class="info-row-sm">
+                <span class="info-label-sm" data-i18n="shift_duration">Tiempo de Sesión:</span>
+                <span class="info-value-sm font-mono text-bold text-highlight" id="op-session-timer">02:14:32</span>
+              </div>
+              <div class="info-row-sm">
+                <span class="info-label-sm" data-i18n="kpi_total">TOTAL:</span>
+                <span class="info-value-sm font-mono" id="op-kpi-total">128</span>
+              </div>
+              <div class="info-row-sm">
+                <span class="info-label-sm" data-i18n="kpi_ok">PIEZAS OK:</span>
+                <span class="info-value-sm font-mono text-green" id="op-kpi-ok">124</span>
+              </div>
+              <div class="info-row-sm">
+                <span class="info-label-sm" data-i18n="kpi_nok">PIEZAS NOK:</span>
+                <span class="info-value-sm font-mono text-red" id="op-kpi-nok">4</span>
+              </div>
+              <div class="info-row-sm">
+                <span class="info-label-sm" data-i18n="kpi_quality">% CALIDAD:</span>
+                <span class="info-value-sm font-mono text-green text-bold" id="op-kpi-quality">96.9%</span>
+              </div>
+              <div class="info-row-sm">
+                <span class="info-label-sm" data-i18n="kpi_downtime">% TIEMPO MUERTO:</span>
+                <span class="info-value-sm font-mono text-bold text-red" id="op-kpi-downtime">0.0%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botones de Control de Marcha -->
+          <div class="op-control-buttons">
+            <button type="button" class="btn-emergency-stop" id="btn-emergency-stop">
+              <span class="btn-emergency-inner" data-i18n="btn_emergency">PARO EMERGENCIA</span>
+            </button>
+            <button type="button" class="btn-cycle-start" id="btn-cycle-start">
+              <span class="btn-start-inner" data-i18n="btn_start">INICIO</span>
+            </button>
+          </div>
+
+          <!-- Logo Baluarte en Columna Izquierda -->
+          <div class="hmi-card op-card-logo-baluarte flex-center">
+            <img src="/assets/LOGO_BALUARTE-xS99IQah.png" alt="Baluarte Logo" class="op-left-logo-baluarte">
+          </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 2. COLUMNA CENTRAL                         -->
+        <!-- ========================================== -->
+        <div class="op-col op-col-center">
+          <!-- Fecha y Hora -->
+          <div class="hmi-card op-card-datetime">
+            <div class="op-datetime-display">
+              <div class="op-time-container">
+                <i data-lucide="clock" class="text-muted" style="width: 20px; height: 20px;"></i>
+                <span class="op-time-big font-mono" id="op-time">09:30:00</span>
+              </div>
+              <div class="op-date-container">
+                <i data-lucide="calendar" class="text-muted" style="width: 16px; height: 16px;"></i>
+                <span class="op-date-big font-mono" id="op-date">26/08/2026</span>
+              </div>
+              <button type="button" class="btn-toggle-sidebar" id="btn-toggle-sidebar" title="Mostrar/Ocultar Configuraciones">
+                <i data-lucide="settings-2" style="width: 16px; height: 16px;"></i>
+                <span data-i18n="btn_toggle_settings">Ajustes</span>
+              </button>
+              <button type="button" class="btn-toggle-sidebar" id="btn-trigger-hourly" title="Simular Registro Fin de Hora" style="background-color: var(--color-purple); border-color: rgba(139,92,246,0.3); margin-left: 8px;">
+                <i data-lucide="hourglass" style="width: 16px; height: 16px;"></i>
+                <span>Fin Hora</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Matriz de gotitas 3x5 -->
+          <div class="hmi-card op-card-matrix flex-1">
+            <div class="card-header-inner flex-between">
+              <div class="flex-align gap-sm">
+                <i data-lucide="layout-grid" class="card-icon-sm navy"></i>
+                <span class="card-title-sm" data-i18n="matrix_view_title">Estado del Fixture</span>
+              </div>
+              <div class="flex-align gap-sm">
+                <span class="fixture-model-badge" id="op-active-recipe-badge">KSL-001 - P01</span>
+                <select id="op-nest-select" class="op-nest-dropdown" title="Seleccionar nido">
+                  <!-- Dynamic options -->
+                </select>
+              </div>
+            </div>
+            <div class="card-body-inner flex-center flex-1">
+              <div class="pieces-grid" id="fixture-grid">
+                <!-- Se inyecta por JS: GOTAS vectoriales -->
+              </div>
+            </div>
+
+            <!-- Leyenda de Estados de las Piezas -->
+            <div class="pieces-legend">
+              <div class="legend-item">
+                <span class="legend-color legend-pending"></span>
+                <span class="legend-label" data-i18n="legend_pending">Pendiente</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color legend-active"></span>
+                <span class="legend-label" data-i18n="legend_active">Activa</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color legend-ok"></span>
+                <span class="legend-label" data-i18n="legend_ok">Procesada OK</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color legend-nok"></span>
+                <span class="legend-label" data-i18n="legend_nok">Procesada NOK</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Detalle de pieza seleccionada -->
+          <div class="op-piece-detail-row">
+            <!-- Imagen de la pieza -->
+            <div class="hmi-card op-card-piece-image">
+              <div class="card-header-inner">
+                <span class="card-title-sm" data-i18n="piece_image_title">Imagen de la pieza</span>
+              </div>
+              <div class="card-body-inner flex-center" id="op-piece-svg-container">
+                <!-- SVG de gota activa -->
+              </div>
+            </div>
+
+            <!-- Información de la pieza -->
+            <div class="hmi-card op-card-piece-info">
+              <div class="card-header-inner">
+                <span class="card-title-sm" data-i18n="piece_info_title">Información de la pieza</span>
+              </div>
+              <div class="card-body-inner">
+                <div class="info-row-sm">
+                  <span class="info-label-sm" data-i18n="col_name">Nombre:</span>
+                  <span class="info-value-sm" id="detail-piece-name">Emblema KOSTAL Gotita</span>
+                </div>
+                <div class="info-row-sm">
+                  <span class="info-label-sm" data-i18n="col_matrix">Posición:</span>
+                  <span class="info-value-sm font-mono text-bold text-highlight" id="detail-piece-index">Nest 01</span>
+                </div>
+                <div class="info-row-sm">
+                  <span class="info-label-sm" data-i18n="col_dist_x">Coordenada X:</span>
+                  <span class="info-value-sm font-mono" id="detail-piece-x">42.00 mm</span>
+                </div>
+                <div class="info-row-sm">
+                  <span class="info-label-sm" data-i18n="col_dist_y">Coordenada Y:</span>
+                  <span class="info-value-sm font-mono" id="detail-piece-y">36.00 mm</span>
+                </div>
+                <div class="info-row-sm">
+                  <span class="info-label-sm" data-i18n="col_status">Estado:</span>
+                  <span class="info-value-sm text-bold" id="detail-piece-status">Pendiente</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 3. COLUMNA DERECHA                         -->
+        <!-- ========================================== -->
+
+        <div class="op-col op-col-right collapsed">
+          <!-- Usuario y Turno + ES/EN / Logout -->
+          <div class="hmi-card op-card-user">
+            <div class="op-user-header flex-between">
+              <div class="op-user-meta flex-column">
+                <span class="op-user-name" id="op-user-name">Juan Pérez</span>
+                <span class="user-role badge-operator" id="op-user-role-badge" data-i18n="role_operator">OPERADOR</span>
+              </div>
+
+              <!-- Selector de Idioma -->
+              <div class="language-selector">
+                <button type="button" class="btn-lang active" data-lang="es">ES</button>
+                <span class="lang-divider">|</span>
+                <button type="button" class="btn-lang" data-lang="en">EN</button>
+              </div>
+            </div>
+
+            <div class="op-user-body">
+              <div class="info-row-sm">
+                <span class="info-label-sm" data-i18n="filter_shift">Turno:</span>
+                <span class="info-value-sm text-bold" id="op-shift-label">T1 (Matutino)</span>
+              </div>
+
+              <!-- Botón admin de alternancia -->
+              <button type="button" class="btn-admin-panel-switch text-center" id="btn-go-to-admin"
+                style="display:none;">
+                <i data-lucide="settings" style="width: 14px; height: 14px;"></i>
+                <span data-i18n="nav_programs">Panel Configuración</span>
+              </button>
+            </div>
+
+            <div class="op-user-footer">
+              <button type="button" class="btn-logout-full" id="btn-logout-op-full">
+                <i data-lucide="log-out" style="width: 16px; height: 16px;"></i>
+                <span data-i18n="btn_logout">Cerrar Sesión</span>
+              </button>
+            </div>
+          </div>
+
+
+          <!-- Movimiento Manual JOG -->
+          <div class="hmi-card op-card-jog">
+            <div class="card-header-inner">
+              <i data-lucide="move" class="card-icon-sm blue"></i>
+              <span class="card-title-sm" data-i18n="pf1_subtitle">Movimiento manual de ejes</span>
+            </div>
+            <div class="card-body-inner gap-sm">
+              <!-- Paso de movimiento -->
+              <div class="jog-step-selector-row flex-between">
+                <span class="jog-step-label font-sm" data-i18n="pf1_lbl_jog_step">Paso</span>
+                <div class="flex-align gap-xs">
+                  <input type="number" id="op-jog-step-val" value="0.5" step="0.1" class="op-jog-step-input">
+                  <span class="jog-step-unit font-mono font-sm">mm</span>
+                </div>
+              </div>
+
+              <!-- Pad de Flechas JOG en cruz -->
+              <div class="op-jog-cross-pad">
+                <button type="button" class="btn-jog-arrow arrow-up" id="btn-op-jog-up" title="Mover Eje Y+ Arriba">
+                  <i data-lucide="chevron-up"></i>
+                </button>
+                <div class="op-jog-row-middle flex-between width-100">
+                  <button type="button" class="btn-jog-arrow arrow-left" id="btn-op-jog-left"
+                    title="Mover Eje X- Izquierda">
+                    <i data-lucide="chevron-left"></i>
+                  </button>
+                  <div class="jog-center-dot flex-center">
+                    <i data-lucide="circle" class="text-muted" style="width: 8px; height: 8px;"></i>
+                  </div>
+                  <button type="button" class="btn-jog-arrow arrow-right" id="btn-op-jog-right"
+                    title="Mover Eje X+ Derecha">
+                    <i data-lucide="chevron-right"></i>
+                  </button>
+                </div>
+                <button type="button" class="btn-jog-arrow arrow-down" id="btn-op-jog-down" title="Mover Eje Y- Abajo">
+                  <i data-lucide="chevron-down"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botones de Eje / Referencia -->
+          <div class="op-reference-buttons-stack">
+            <button type="button" class="btn-op-ref" id="btn-op-home">
+              <i data-lucide="home" style="width: 16px; height: 16px;"></i>
+              <span data-i18n="btn_home">Botón de home</span>
+            </button>
+            <button type="button" class="btn-op-ref" id="btn-op-set-zero">
+              <i data-lucide="locate" style="width: 16px; height: 16px;"></i>
+              <span>Seteo de 0</span>
+            </button>
+            <button type="button" class="btn-op-ref" id="btn-op-setpoint">
+              <i data-lucide="crosshair" style="width: 16px; height: 16px;"></i>
+              <span>Selección de setpoint</span>
+            </button>
+            <button type="button" class="btn-op-ref" id="btn-op-return-zero">
+              <i data-lucide="corner-down-left" style="width: 16px; height: 16px;"></i>
+              <span>Regreso a 0</span>
+            </button>
+          </div>
+
+        </div>
+      </main>
+    </section>
+
+    <!-- ========================================================== -->
+    <!-- 3. ROL ADMINISTRADOR - PANEL ADMINISTRATIVO                -->
+    <!-- ========================================================== -->
+    <section id="screen-admin" class="screen">
+      <div class="admin-layout">
+        <!-- NAVEGACIÓN LATERAL IZQUIERDA -->
+        <aside class="admin-sidebar">
+          <div class="sidebar-top">
+            <img src="/assets/LogoKostal-CsdGwbEW.webp" alt="KOSTAL Logo" class="sidebar-logo-kostal">
+            <span class="sidebar-title">HMI ADMIN</span>
+          </div>
+
+          <nav class="sidebar-nav">
+            <button type="button" class="nav-item active" data-tab="tab-programs">
+              <i data-lucide="file-cog"></i>
+              <span data-i18n="nav_programs">Programas</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="tab-stats">
+              <i data-lucide="line-chart"></i>
+              <span data-i18n="nav_stats">Estadísticas</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="tab-users">
+              <i data-lucide="users"></i>
+              <span data-i18n="nav_users">Usuarios</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="tab-settings">
+              <i data-lucide="settings"></i>
+              <span data-i18n="nav_settings">Ajustes Globales</span>
+            </button>
+            <button type="button" class="nav-item" id="btn-admin-return-machine"
+              style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 10px; color: #93C5FD;">
+              <i data-lucide="monitor"></i>
+              <span data-i18n="legend_active">Vista de Máquina</span>
+            </button>
+          </nav>
+
+          <div class="sidebar-bottom">
+            <!-- Selector de Idioma -->
+            <div class="admin-language-selector">
+              <button type="button" class="btn-lang-admin active" data-lang="es">ES</button>
+              <span class="lang-divider-admin">|</span>
+              <button type="button" class="btn-lang-admin" data-lang="en">EN</button>
+            </div>
+
+            <div class="sidebar-user-card">
+              <i data-lucide="user-check" class="sidebar-user-avatar"></i>
+              <div class="sidebar-user-info">
+                <span class="sidebar-user-name" id="admin-user-name">Carlos H.</span>
+                <span class="sidebar-user-role" data-i18n="role_admin">ADMINISTRADOR</span>
+              </div>
+            </div>
+            <button type="button" class="btn-sidebar-logout" id="btn-logout-admin">
+              <i data-lucide="log-out"></i>
+              <span data-i18n="btn_logout">Cerrar Sesión</span>
+            </button>
+
+            <!-- Logo Baluarte al fondo del Sidebar -->
+            <div class="sidebar-baluarte-logo">
+              <img src="/assets/LOGO_BALUARTE-xS99IQah.png" alt="Baluarte Logo" class="sidebar-logo-baluarte">
+            </div>
+          </div>
+        </aside>
+
+        <!-- ÁREA PRINCIPAL DE CONTENIDO ADMIN -->
+        <main class="admin-content">
+          <!-- HEADER DE LA PÁGINA ADMIN -->
+          <header class="admin-content-header">
+            <div class="admin-header-left">
+              <h1 id="admin-page-title" data-i18n="admin_programs_title">Programas de producción</h1>
+              <p id="admin-page-subtitle" data-i18n="admin_programs_subtitle">Configuración de productos, matrices y
+                coordenadas.</p>
+            </div>
+            <div class="admin-header-right">
+              <!-- Logotipo pequeño de Baluarte en el header donde no hay otra asignación -->
+              <div class="admin-header-logo-baluarte">
+                <img src="/assets/LOGO_BALUARTE-xS99IQah.png" alt="Baluarte Logo" class="header-logo-baluarte">
+              </div>
+              <div class="admin-time-container">
+                <span class="admin-time" id="admin-time">09:30:00</span>
+                <span class="admin-date" id="admin-date">26/08/2026</span>
+              </div>
+            </div>
+          </header>
+
+          <div class="admin-tab-container">
+            <!-- ========================================== -->
+            <!-- TAB 1: PROGRAMAS (CONFIG RECETAS)          -->
+            <!-- ========================================== -->
+            <div id="tab-programs" class="admin-tab active">
+              <div class="tab-actions-row">
+                <div class="search-box">
+                  <i data-lucide="search"></i>
+                  <input type="text" placeholder="Buscar programa..." data-i18n-placeholder="placeholder_search_prog">
+                </div>
+                <button type="button" class="btn-primary btn-icon-label" id="btn-new-program">
+                  <i data-lucide="plus"></i>
+                  <span data-i18n="btn_new_program">NUEVA PIEZA</span>
+                </button>
+              </div>
+
+              <!-- Tabla de Recetas -->
+              <div class="table-container">
+                <table class="hmi-table">
+                  <thead>
+                    <tr>
+                      <th data-i18n="col_name">Nombre</th>
+                      <th data-i18n="col_model">Modelo</th>
+                      <th data-i18n="col_program">Programa</th>
+                      <th data-i18n="col_matrix">Matriz</th>
+                      <th data-i18n="col_dist_x">Distancia centro en X</th>
+                      <th data-i18n="col_dist_y">Distancia centro en Y</th>
+                      <th data-i18n="col_modified">Última Modificación</th>
+                      <th data-i18n="col_status">Estado</th>
+                      <th class="text-center" data-i18n="col_actions">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody id="programs-table-body">
+                    <!-- Se inyecta por JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- TAB 2: ESTADÍSTICAS (HISTÓRICOS)           -->
+            <!-- ========================================== -->
+            <div id="tab-stats" class="admin-tab">
+              <!-- Filtros Superiores -->
+              <div class="hmi-card stats-filter-card">
+                <div class="card-header">
+                  <i data-lucide="filter" class="card-icon blue"></i>
+                  <h2 data-i18n="filters_title">Filtros de Búsqueda</h2>
+                </div>
+                <div class="card-body">
+                  <form id="stats-filter-form" class="stats-filter-grid" onsubmit="return false;">
+                    <div class="form-group-sm">
+                      <label data-i18n="filter_date_from">Fecha Desde</label>
+                      <input type="date" value="2026-08-20">
+                    </div>
+                    <div class="form-group-sm">
+                      <label data-i18n="filter_date_to">Fecha Hasta</label>
+                      <input type="date" value="2026-08-26">
+                    </div>
+                    <div class="form-group-sm">
+                      <label data-i18n="filter_user">Usuario</label>
+                      <select>
+                        <option value="all" data-i18n="opt_all_users">Todos los usuarios</option>
+                        <option value="juan">Juan Pérez</option>
+                        <option value="maria">María López</option>
+                        <option value="carlos">Carlos Hernández</option>
+                      </select>
+                    </div>
+                    <div class="form-group-sm">
+                      <label data-i18n="filter_model">Modelo</label>
+                      <select>
+                        <option value="all" data-i18n="opt_all_models">Todos los modelos</option>
+                        <option value="KSL-001">KSL-001</option>
+                        <option value="KSL-002">KSL-002</option>
+                        <option value="KSL-003">KSL-003</option>
+                      </select>
+                    </div>
+                    <div class="form-group-sm">
+                      <label data-i18n="filter_shift">Turno</label>
+                      <select>
+                        <option value="all" data-i18n="opt_all_shifts">Todos los turnos</option>
+                        <option value="1" data-i18n="opt_shift_1">Turno 1 (Matutino)</option>
+                        <option value="2" data-i18n="opt_shift_2">Turno 2 (Vespertino)</option>
+                        <option value="3" data-i18n="opt_shift_3">Turno 3 (Nocturno)</option>
+                      </select>
+                    </div>
+                    <div class="form-group-sm filter-buttons-group">
+                      <label class="invisible-label">Actions</label>
+                      <div class="flex-row-gap">
+                        <button type="submit" class="btn-primary btn-sm" id="btn-filter-stats">
+                          <i data-lucide="filter"></i>
+                          <span data-i18n="btn_filter">Filtrar</span>
+                        </button>
+                        <button type="button" class="btn-secondary btn-sm" id="btn-export-excel">
+                          <i data-lucide="download"></i>
+                          <span data-i18n="btn_export">Exportar a Excel (CSV)</span>
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              <!-- KPIs de Estadísticas -->
+              <div class="stats-kpi-grid">
+                <div class="kpi-mini-card">
+                  <span class="kpi-mini-label" data-i18n="stat_kpi_total">TOTAL PRODUCIDO</span>
+                  <span class="kpi-mini-value" id="stats-kpi-total">1,428</span>
+                  <span class="kpi-mini-trend text-green"><i data-lucide="trending-up"></i> +12% vs sem anterior</span>
+                </div>
+                <div class="kpi-mini-card">
+                  <span class="kpi-mini-label" data-i18n="stat_kpi_ok">TOTAL PIEZAS OK</span>
+                  <span class="kpi-mini-value text-green" id="stats-kpi-ok">1,392</span>
+                  <span class="kpi-mini-percentage font-mono bg-green-soft">97.5%</span>
+                </div>
+                <div class="kpi-mini-card">
+                  <span class="kpi-mini-label" data-i18n="stat_kpi_nok">TOTAL PIEZAS NOK</span>
+                  <span class="kpi-mini-value text-red" id="stats-kpi-nok">36</span>
+                  <span class="kpi-mini-percentage font-mono bg-red-soft">2.5%</span>
+                </div>
+                <div class="kpi-mini-card">
+                  <span class="kpi-mini-label" data-i18n="stat_kpi_avg_login">AVG LOGIN → 1ª SEC.</span>
+                  <span class="kpi-mini-value" id="stats-kpi-avg-login">04:18</span>
+                  <span class="kpi-mini-trend text-green"><i data-lucide="clock"></i> Eficiencia OK</span>
+                </div>
+                <div class="kpi-mini-card">
+                  <span class="kpi-mini-label" data-i18n="stat_kpi_avg_session">AVG DURACIÓN SESIÓN</span>
+                  <span class="kpi-mini-value text-purple" id="stats-kpi-avg-session">08:04:12</span>
+                  <span class="kpi-mini-subtext" data-i18n="stat_kpi_sub_session">Jornadas completas</span>
+                </div>
+              </div>
+
+              <!-- Tabla de Registros Históricos -->
+              <div class="table-container">
+                <table class="hmi-table font-sm">
+                  <thead>
+                    <tr>
+                      <th data-i18n="col_h_date">Fecha</th>
+                      <th data-i18n="col_h_user">Usuario</th>
+                      <th data-i18n="col_h_login">Inicio Sesión</th>
+                      <th data-i18n="col_h_first_seq">1ª Secuencia</th>
+                      <th data-i18n="col_h_delta">Delta Login-1ª Sec</th>
+                      <th data-i18n="col_h_model">Modelo</th>
+                      <th data-i18n="col_h_program">Prog</th>
+                      <th data-i18n="col_h_total">Total</th>
+                      <th data-i18n="col_h_ok">OK</th>
+                      <th data-i18n="col_h_nok">NOK</th>
+                      <th data-i18n="col_h_quality">% Calidad</th>
+                      <th data-i18n="col_h_logout">Fin Sesión</th>
+                      <th data-i18n="col_h_duration">Duración Jornada</th>
+                    </tr>
+                  </thead>
+                  <tbody id="stats-table-body">
+                    <!-- Se inyecta por JS (8 registros) -->
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Nueva Sección: Registro Conteo Horario -->
+              <div class="hmi-card no-shadow bg-light-gray-soft" style="margin-top: 20px; padding: 16px;">
+                <div class="card-header-inner" style="background: none; border: none; padding: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                  <i data-lucide="hourglass" class="card-icon-sm purple"></i>
+                  <span class="card-title-sm">REGISTRO DE CONTEO HORARIO DE PIEZAS</span>
+                </div>
+                <div class="table-container">
+                  <table class="hmi-table font-sm">
+                    <thead>
+                      <tr>
+                        <th>Hora N°</th>
+                        <th>Rango de Tiempo</th>
+                        <th>Parámetro Calidad</th>
+                        <th>Piezas OK</th>
+                        <th>Piezas NOK</th>
+                        <th>Total</th>
+                        <th>% Calidad</th>
+                        <th>Hora Registro</th>
+                      </tr>
+                    </thead>
+                    <tbody id="hourly-records-table-body">
+                      <!-- Inyectado por JS -->
+                      <tr>
+                        <td colspan="8" class="text-center text-muted">No hay registros horarios aún. Presione el botón 'Fin Hora' para simularlo.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- TAB 3: USUARIOS                            -->
+            <!-- ========================================== -->
+            <div id="tab-users" class="admin-tab">
+              <!-- KPI de Usuarios -->
+              <div class="users-summary-row">
+                <div class="users-kpis">
+                  <div class="user-kpi-pill">
+                    <span class="pill-label" data-i18n="usr_kpi_active">Usuarios Activos:</span>
+                    <span class="pill-value" id="usr-kpi-active">18</span>
+                  </div>
+                  <div class="user-kpi-pill">
+                    <span class="pill-label" data-i18n="usr_kpi_operators">Operadores:</span>
+                    <span class="pill-value text-blue" id="usr-kpi-operators">15</span>
+                  </div>
+                  <div class="user-kpi-pill">
+                    <span class="pill-label" data-i18n="usr_kpi_admins">Administradores:</span>
+                    <span class="pill-value text-purple" id="usr-kpi-admins">3</span>
+                  </div>
+                </div>
+
+                <button type="button" class="btn-primary btn-icon-label" id="btn-new-user">
+                  <i data-lucide="user-plus"></i>
+                  <span data-i18n="btn_new_user">+ NUEVO USUARIO</span>
+                </button>
+              </div>
+
+              <!-- Tabla de Usuarios -->
+              <div class="table-container">
+                <table class="hmi-table">
+                  <thead>
+                    <tr>
+                      <th data-i18n="col_u_id">ID Empleado</th>
+                      <th data-i18n="col_u_name">Nombre completo</th>
+                      <th data-i18n="col_u_user">Nombre de usuario</th>
+                      <th data-i18n="col_u_role">Rol</th>
+                      <th data-i18n="col_u_status">Estado</th>
+                      <th data-i18n="col_u_access">Último acceso</th>
+                      <th class="text-center" data-i18n="col_u_actions">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody id="users-table-body">
+                    <!-- Se inyecta por JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- TAB 4: AJUSTES (SETTINGS GLOBAL)           -->
+            <!-- ========================================== -->
+            <div id="tab-settings" class="admin-tab">
+              <div class="hmi-card">
+                <div class="card-header-inner">
+                  <i data-lucide="settings" class="card-icon-sm blue"></i>
+                  <span class="card-title-sm" data-i18n="admin_settings_title">Configuración del HMI</span>
+                </div>
+                <form id="global-settings-form" class="card-body-inner flex-column gap-md" style="padding: 20px;">
+                  <div class="grid-2x2">
+                    <div class="form-group">
+                      <label for="settings-project-name">Nombre del Proyecto</label>
+                      <input type="text" id="settings-project-name" required value="KOSTAL HMI Dashboard Prototipo">
+                    </div>
+                    
+                    <div class="form-group">
+                      <label for="settings-station-code">Código de la Estación</label>
+                      <input type="text" id="settings-station-code" required value="EST-KOSTAL-04">
+                    </div>
+                  </div>
+                  
+                  <div class="grid-2x2">
+                    <div class="form-group">
+                      <label for="settings-station-desc">Descripción / Línea</label>
+                      <input type="text" id="settings-station-desc" required value="Línea de Ensamblado & Calidad KOSTAL">
+                    </div>
+                    
+                    <div class="form-group">
+                      <label for="settings-good-piece-param">Parámetro Calidad (Buena Pieza)</label>
+                      <input type="text" id="settings-good-piece-param" required value="0.5 mm" placeholder="Ej. 0.5 mm, 12V, etc.">
+                    </div>
+                  </div>
+                  
+                  <div class="grid-2x2">
+                    <div class="form-group">
+                      <label for="settings-max-idle">Límite de Inactividad (segundos)</label>
+                      <input type="number" id="settings-max-idle" required value="15" min="5" placeholder="Segundos antes de justificación">
+                    </div>
+                    
+                    <div class="form-group">
+                      <label for="settings-hourly-min">Efectividad Mínima (minutos por hora)</label>
+                      <input type="number" id="settings-hourly-min" required value="15" min="1" max="60" placeholder="Minutos activos por hora requeridos">
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="settings-piece-image-url">URL Imagen / SVG de la Pieza</label>
+                    <input type="text" id="settings-piece-image-url" value="" placeholder="Dejar vacío para usar gota vectorizada por defecto">
+                  </div>
+                  
+                  <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+                    <button type="submit" class="btn-primary" style="width: auto; padding: 12px 30px;">
+                      <i data-lucide="save"></i>
+                      <span>Guardar Ajustes</span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              <!-- Tabla de Registros de Tiempos Muertos Justificados -->
+              <div class="hmi-card no-shadow bg-light-gray-soft" style="margin-top: 20px; padding: 16px;">
+                <div class="card-header-inner" style="background: none; border: none; padding: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                  <i data-lucide="alert-triangle" class="card-icon-sm text-red"></i>
+                  <span class="card-title-sm">HISTÓRICO DE TIEMPOS MUERTOS JUSTIFICADOS</span>
+                </div>
+                <div class="table-container">
+                  <table class="hmi-table font-sm">
+                    <thead>
+                      <tr>
+                        <th>N°</th>
+                        <th>Motivo</th>
+                        <th>Duración</th>
+                        <th>Comentarios</th>
+                        <th>Fecha y Hora</th>
+                      </tr>
+                    </thead>
+                    <tbody id="downtime-records-table-body">
+                      <tr>
+                        <td colspan="5" class="text-center text-muted">No hay registros de tiempo muerto aún.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </section>
+
+    <!-- ========================================================== -->
+    <!-- 4. MODALES / PANTALLAS FLOTANTES                           -->
+    <!-- ========================================================== -->
+    <div id="modal-backdrop" class="modal-backdrop">
+      <!-- 4.1. PF1: CONFIGURACIÓN DE PROGRAMA / JOG -->
+      <div id="modal-pf1" class="modal-content-card modal-lg">
+        <header class="modal-header">
+          <div class="modal-header-left">
+            <h2 data-i18n="pf1_title">Configuración de programa</h2>
+            <p data-i18n="pf1_subtitle">Modelo / matriz / posicionamiento de ejes (Modo JOG)</p>
+          </div>
+          <button type="button" class="btn-close-modal" id="btn-close-pf1">
+            <i data-lucide="x"></i>
+          </button>
+        </header>
+
+        <main class="modal-body-layout">
+          <!-- Columna Izquierda: Información de Receta -->
+          <div class="modal-body-column column-40">
+            <div class="hmi-card no-shadow">
+              <div class="card-header-inner">
+                <i data-lucide="file-text" class="card-icon-sm blue"></i>
+                <span class="card-title-sm" data-i18n="pf1_recipe_info">Información General</span>
+              </div>
+              <div class="card-body-inner">
+                <div class="form-group">
+                  <label for="pf1-name" data-i18n="pf1_lbl_name">Nombre Receta</label>
+                  <input type="text" id="pf1-name" value="Botón A">
+                </div>
+                <div class="form-group">
+                  <label for="pf1-model" data-i18n="pf1_lbl_model">Modelo</label>
+                  <input type="text" id="pf1-model" value="KSL-001">
+                </div>
+                <div class="form-group">
+                  <label for="pf1-program" data-i18n="pf1_lbl_program">Código Programa</label>
+                  <input type="text" id="pf1-program" value="P01">
+                </div>
+                <div class="form-group flex-row-gap">
+                  <div>
+                    <label data-i18n="pf1_lbl_matrix_cols">Matriz X (Col)</label>
+                    <input type="number" id="pf1-matrix-x" value="3" min="1" max="10">
+                  </div>
+                  <div>
+                    <label data-i18n="pf1_lbl_matrix_rows">Matriz Y (Filas)</label>
+                    <input type="number" id="pf1-matrix-y" value="5" min="1" max="10">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Controles JOG Ejes X / Y y SET 0 -->
+          <div class="modal-body-column column-60 border-left">
+            <div class="pf1-jog-grid">
+              
+              <!-- 1. Entradas de Coordenadas y Paso JOG (Izquierda) -->
+              <div class="pf1-coord-column">
+                <div class="form-group-sm">
+                  <label data-i18n="pf1_axis_x">EJE X - Distancia entre Centros (Horizontal)</label>
+                  <div class="jog-value-display">
+                    <input type="number" id="pf1-val-x" value="42.00" step="0.01">
+                    <span class="unit">mm</span>
+                  </div>
+                </div>
+                <div class="form-group-sm" style="margin-top: 12px;">
+                  <label data-i18n="pf1_axis_y">EJE Y - Distancia entre Centros (Vertical)</label>
+                  <div class="jog-value-display">
+                    <input type="number" id="pf1-val-y" value="36.00" step="0.01">
+                    <span class="unit">mm</span>
+                  </div>
+                </div>
+                <div class="form-group-sm" style="margin-top: 12px;">
+                  <label data-i18n="pf1_lbl_jog_step">Paso JOG</label>
+                  <select id="pf1-step-val">
+                    <option value="0.1">0.1 mm</option>
+                    <option value="0.5" selected>0.5 mm</option>
+                    <option value="1.0">1.0 mm</option>
+                    <option value="5.0">5.0 mm</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- 2. Pad de Flechas JOG en Cruz (Centro) -->
+              <div class="pf1-jog-pad-column">
+                <div class="op-jog-cross-pad">
+                  <button type="button" class="btn-jog-arrow arrow-up" id="btn-jog-y-inc" title="Mover Eje Y+ Arriba">
+                    <i data-lucide="chevron-up"></i>
+                  </button>
+                  <div class="op-jog-row-middle flex-between width-100">
+                    <button type="button" class="btn-jog-arrow arrow-left" id="btn-jog-x-dec" title="Mover Eje X- Izquierda">
+                      <i data-lucide="chevron-left"></i>
+                    </button>
+                    <div class="jog-center-dot flex-center">
+                      <i data-lucide="circle" class="text-muted" style="width: 8px; height: 8px;"></i>
+                    </div>
+                    <button type="button" class="btn-jog-arrow arrow-right" id="btn-jog-x-inc" title="Mover Eje X+ Derecha">
+                      <i data-lucide="chevron-right"></i>
+                    </button>
+                  </div>
+                  <button type="button" class="btn-jog-arrow arrow-down" id="btn-jog-y-dec" title="Mover Eje Y- Abajo">
+                    <i data-lucide="chevron-down"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- 3. Botones de Acción Especiales (Derecha) -->
+              <div class="pf1-actions-column">
+                <button type="button" class="btn-reference btn-ref-zero" id="btn-ref-zero"
+                  title="Establecer posición actual como Cero">
+                  <i data-lucide="locate"></i>
+                  <span>SET 0</span>
+                </button>
+                <button type="button" class="btn-reference btn-ref-down" id="btn-ref-down" title="Mover Eje Z Abajo">
+                  <i data-lucide="arrow-down-circle"></i>
+                  <span data-i18n="btn_ref_down">BAJAR</span>
+                </button>
+                <button type="button" class="btn-reference btn-ref-up" id="btn-ref-up" title="Mover Eje Z Arriba">
+                  <i data-lucide="arrow-up-circle"></i>
+                  <span data-i18n="btn_ref_up">SUBIR</span>
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </main>
+
+        <!-- Información Inferior de Resumen Contextual (PF1) -->
+        <section class="modal-summary-panel">
+          <h3 data-i18n="pf1_summary_title">Resumen de Parámetros Activos:</h3>
+          <div class="summary-grid">
+            <div class="sum-item">
+              <span class="sum-lbl" data-i18n="sum_lbl_prog">Programa:</span>
+              <span class="sum-val font-mono" id="sum-val-prog">P01</span>
+            </div>
+            <div class="sum-item">
+              <span class="sum-lbl" data-i18n="sum_lbl_matrix">Matriz:</span>
+              <span class="sum-val font-mono" id="sum-val-matrix">3 × 5</span>
+            </div>
+            <div class="sum-item">
+              <span class="sum-lbl" data-i18n="sum_lbl_x">Distancia centro en X:</span>
+              <span class="sum-val font-mono text-highlight text-bold" id="sum-val-x">42.00 mm</span>
+            </div>
+            <div class="sum-item">
+              <span class="sum-lbl" data-i18n="sum_lbl_y">Distancia centro en Y:</span>
+              <span class="sum-val font-mono text-highlight text-bold" id="sum-val-y">36.00 mm</span>
+            </div>
+            <div class="sum-item">
+              <span class="sum-lbl" data-i18n="sum_lbl_modified">Última Modif:</span>
+              <span class="sum-val" id="sum-val-modified">25/08/2026 10:42</span>
+            </div>
+            <div class="sum-item">
+              <span class="sum-lbl" data-i18n="sum_lbl_user">Modificado por:</span>
+              <span class="sum-val text-bold" id="sum-val-user">Admin</span>
+            </div>
+          </div>
+        </section>
+
+        <footer class="modal-footer">
+          <button type="button" class="btn-secondary" id="btn-cancel-pf1" data-i18n="btn_cancel">Cancelar</button>
+          <button type="button" class="btn-primary" id="btn-save-pf1" data-i18n="btn_save_config">GUARDAR
+            CONFIGURACIÓN</button>
+        </footer>
+      </div>
+
+      <!-- 4.2. MODAL: NUEVO USUARIO -->
+      <div id="modal-new-user" class="modal-content-card modal-md">
+        <header class="modal-header">
+          <div class="modal-header-left">
+            <h2 data-i18n="new_user_title">Crear Nuevo Usuario</h2>
+            <p data-i18n="new_user_subtitle">Registrar credenciales y asignar nivel de acceso</p>
+          </div>
+          <button type="button" class="btn-close-modal" id="btn-close-new-user">
+            <i data-lucide="x"></i>
+          </button>
+        </header>
+
+        <form id="new-user-form" onsubmit="return false;">
+          <main class="modal-body flex-column gap-md">
+            <div class="form-group">
+              <label for="nu-name" data-i18n="lbl_nu_name">Nombre Completo</label>
+              <input type="text" id="nu-name" placeholder="Ej. Pedro Picapiedra" required>
+            </div>
+
+            <div class="form-group">
+              <label for="nu-emp-num" data-i18n="lbl_nu_emp_num">Número de Empleado (ID)</label>
+              <input type="text" id="nu-emp-num" placeholder="Ej. KOSTAL-2094" required>
+            </div>
+
+            <div class="form-group flex-row-gap">
+              <div class="width-50">
+                <label for="nu-username" data-i18n="lbl_nu_username">Nombre de Usuario</label>
+                <input type="text" id="nu-username" placeholder="ej. pedro.p" required autocomplete="username">
+              </div>
+              <div class="width-50">
+                <label for="nu-role" data-i18n="lbl_nu_role">Rol en el Sistema</label>
+                <select id="nu-role">
+                  <option value="OPERADOR" data-i18n="opt_nu_oper">Operador</option>
+                  <option value="ADMIN" data-i18n="opt_nu_admin">Administrador</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group flex-row-gap">
+              <div class="width-50">
+                <label for="nu-pass" data-i18n="lbl_nu_pass">Contraseña</label>
+                <input type="password" id="nu-pass" placeholder="••••••••" required autocomplete="new-password">
+              </div>
+              <div class="width-50">
+                <label for="nu-pass-conf" data-i18n="lbl_nu_pass_conf">Confirmar Contraseña</label>
+                <input type="password" id="nu-pass-conf" placeholder="••••••••" required autocomplete="new-password">
+              </div>
+            </div>
+
+            <div class="form-group toggle-group flex-align">
+              <label for="nu-status-toggle" data-i18n="lbl_nu_status">Estado de Cuenta:</label>
+              <div class="switch-wrapper">
+                <input type="checkbox" id="nu-status-toggle" checked>
+                <label for="nu-status-toggle" class="switch-slider"></label>
+              </div>
+              <span class="toggle-text text-green" id="nu-status-label" data-i18n="status_active">Activo</span>
+            </div>
+          </main>
+
+          <footer class="modal-footer">
+            <button type="button" class="btn-secondary" id="btn-cancel-new-user"
+              data-i18n="btn_cancel">CANCELAR</button>
+            <button type="submit" class="btn-primary" id="btn-submit-new-user" data-i18n="btn_create_user">CREAR
+              USUARIO</button>
+          </footer>
+        </form>
+      </div>
+
+      <!-- 4.3. MODAL: DETALLE DEL OPERADOR -->
+      <div id="modal-user-detail" class="modal-content-card modal-md">
+        <header class="modal-header">
+          <div class="modal-header-left">
+            <h2 data-i18n="detail_user_title">Productividad del Operador</h2>
+            <p data-i18n="detail_user_subtitle">Métricas e histórico del empleado en la estación</p>
+          </div>
+          <button type="button" class="btn-close-modal" id="btn-close-user-detail">
+            <i data-lucide="x"></i>
+          </button>
+        </header>
+
+        <main class="modal-body flex-column gap-md">
+          <div class="detail-profile-header">
+            <i data-lucide="user" class="detail-avatar"></i>
+            <div>
+              <h3 id="det-name" class="detail-name">Juan Pérez</h3>
+              <div class="flex-align gap-xs">
+                <span class="detail-emp-id" id="det-emp-num">KOSTAL-0842</span>
+                <span class="user-role badge-operator" id="det-role" data-i18n="role_operator">OPERADOR</span>
+                <span class="badge-status-active" id="det-status">Activo</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="detail-grid">
+            <div class="detail-box">
+              <span class="detail-lbl" data-i18n="det_lbl_total_shifts">Jornadas Registradas</span>
+              <span class="detail-val" id="det-total-shifts">42</span>
+            </div>
+            <div class="detail-box">
+              <span class="detail-lbl" data-i18n="det_lbl_total_prod">Piezas Producidas</span>
+              <span class="detail-val" id="det-total-prod">6,842</span>
+            </div>
+            <div class="detail-box">
+              <span class="detail-lbl" data-i18n="det_lbl_ok">Piezas OK</span>
+              <span class="detail-val text-green" id="det-ok">6,712</span>
+            </div>
+            <div class="detail-box">
+              <span class="detail-lbl" data-i18n="det_lbl_nok">Piezas NOK</span>
+              <span class="detail-val text-red" id="det-nok">130</span>
+            </div>
+            <div class="detail-box">
+              <span class="detail-lbl" data-i18n="det_lbl_efficiency">Calidad Promedio</span>
+              <span class="detail-val text-green font-mono" id="det-quality">98.1%</span>
+            </div>
+            <div class="detail-box">
+              <span class="detail-lbl" data-i18n="det_lbl_delta">Avg Login → 1ª Sec</span>
+              <span class="detail-val font-mono" id="det-avg-delta">04:32</span>
+            </div>
+          </div>
+
+          <div class="hmi-card no-shadow bg-light-gray-soft">
+            <div class="card-header-inner">
+              <i data-lucide="history" class="card-icon-sm purple"></i>
+              <span class="card-title-sm" data-i18n="det_last_shift_title">Métricas de Última Jornada</span>
+            </div>
+            <div class="card-body-inner">
+              <div class="info-row-sm">
+                <span class="info-label-sm" data-i18n="det_last_date">Fecha:</span>
+                <span class="info-value-sm text-bold" id="det-last-date">25/08/2026</span>
+              </div>
+              <div class="info-row-sm">
+                <span class="info-label-sm" data-i18n="det_last_login">Inicio / Cierre Sesión:</span>
+                <span class="info-value-sm font-mono" id="det-last-times">07:31:24 - 16:02:18</span>
+              </div>
+              <div class="info-row-sm">
+                <span class="info-label-sm" data-i18n="det_last_duration">Duración Jornada:</span>
+                <span class="info-value-sm font-mono text-bold" id="det-last-duration">08:30:54</span>
+              </div>
+              <div class="info-row-sm">
+                <span class="info-label-sm" data-i18n="det_last_pieces">Producción (OK / NOK):</span>
+                <span class="info-value-sm font-mono text-highlight text-bold" id="det-last-pieces">328 (321 OK / 7
+                  NOK)</span>
+              </div>
+            </div>
+          </div>
+        </main>
+
+        <footer class="modal-footer">
+          <button type="button" class="btn-primary" id="btn-close-detail-modal" data-i18n="btn_close">Cerrar</button>
+        </footer>
+      </div>
+    </div>
+
+    <!-- ========================================================== -->
+    <!-- 4.4. MODALES FIJOS DE BLOQUEO (HORARIO / TIEMPO MUERTO)    -->
+    <!-- ========================================================== -->
+    <!-- MODAL: BLOQUEO CONTEO HORARIO -->
+    <div id="modal-hourly-count" class="modal-backdrop-fixed">
+      <div class="modal-content-card modal-md">
+        <header class="modal-header">
+          <div class="modal-header-left">
+            <h2 data-i18n="hourly_block_title">SISTEMA BLOQUEADO - REGISTRO DE CONTEO HORARIO</h2>
+            <p data-i18n="hourly_block_desc">Por favor ingrese el conteo físico de piezas OK y NOK de la última hora para continuar.</p>
+          </div>
+        </header>
+        <form id="hourly-count-form" onsubmit="return false;">
+          <main class="modal-body flex-column gap-md">
+            <div class="hmi-card no-shadow bg-light-gray-soft" style="padding: 12px; display: flex; flex-direction: column; gap: 6px;">
+              <div class="info-row-sm">
+                <span class="info-label-sm">Rango de Tiempo:</span>
+                <span class="info-value-sm text-bold text-highlight" id="hourly-time-range">00:00:00 - 01:00:00</span>
+              </div>
+              <div class="info-row-sm">
+                <span class="info-label-sm">Parámetro Calidad Activo:</span>
+                <span class="info-value-sm font-mono text-bold" id="hourly-quality-param">0.5 mm</span>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="hourly-ok-input">Piezas OK Registradas (Físico)</label>
+              <input type="number" id="hourly-ok-input" value="0" min="0" required style="font-family: var(--font-mono); font-weight: bold; color: var(--color-ok); font-size: 18px; text-align: center; background-color: white;">
+            </div>
+            
+            <div class="form-group">
+              <label for="hourly-nok-input">Piezas NOK Registradas (Físico)</label>
+              <input type="number" id="hourly-nok-input" value="0" min="0" required style="font-family: var(--font-mono); font-weight: bold; color: var(--color-nok); font-size: 18px; text-align: center; background-color: white;">
+            </div>
+          </main>
+          <footer class="modal-footer">
+            <button type="submit" class="btn-primary" id="btn-submit-hourly" data-i18n="btn_register" style="width: 100%;">Registrar y Reanudar</button>
+          </footer>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL: JUSTIFICACIÓN DE TIEMPO MUERTO -->
+    <div id="modal-downtime-justification" class="modal-backdrop-fixed">
+      <div class="modal-content-card modal-md">
+        <header class="modal-header">
+          <div class="modal-header-left">
+            <h2 data-i18n="downtime_block_title">SISTEMA DETENIDO - JUSTIFICACIÓN DE TIEMPO MUERTO</h2>
+            <p data-i18n="downtime_block_desc">El tiempo de inactividad ha superado el límite permitido. Seleccione un motivo para continuar.</p>
+          </div>
+        </header>
+        <form id="downtime-justification-form" onsubmit="return false;">
+          <main class="modal-body flex-column gap-md">
+            <div class="hmi-card no-shadow bg-light-gray-soft" style="padding: 12px; border-left: 4px solid var(--color-warn); display: flex; flex-direction: column; gap: 6px;">
+              <div class="info-row-sm">
+                <span class="info-label-sm">Tiempo Inactivo:</span>
+                <span class="info-value-sm text-bold text-red font-mono" id="downtime-inactive-seconds">300 segundos</span>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="downtime-reason-select">Motivo del Tiempo Muerto</label>
+              <select id="downtime-reason-select" required style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-medium); background-color: white; font-weight: bold; color: var(--text-primary);">
+                <option value="Falta de Material">Falta de Material</option>
+                <option value="Ajuste de Ejes/Receta">Ajuste de Ejes/Receta</option>
+                <option value="Falla en Máquina/Fixture">Falla en Máquina/Fixture</option>
+                <option value="Junta de Calidad">Junta de Calidad</option>
+                <option value="Cambio de Turno">Cambio de Turno</option>
+                <option value="Descanso / Break">Descanso / Break</option>
+                <option value="Otro">Otro (Especificar en Comentarios)</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="downtime-comments">Comentarios / Observaciones</label>
+              <textarea id="downtime-comments" placeholder="Escriba los detalles aquí..." style="width: 100%; min-height: 80px; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-medium); background-color: white; font-family: inherit; font-size: 13px;"></textarea>
+            </div>
+          </main>
+          <footer class="modal-footer">
+            <button type="submit" class="btn-primary" id="btn-submit-downtime" data-i18n="btn_justify" style="width: 100%; background-color: var(--color-warn); border-color: transparent;">Justificar y Reanudar</button>
+          </footer>
+        </form>
+      </div>
+    </div>
+
+    <!-- ========================================================== -->
+    <!-- 5. TOAST / NOTIFICACIONES FLOTANTES                        -->
+    <!-- ========================================================== -->
+    <div id="toast-container" class="toast-container"></div>
+  </div>
+
+  <!-- Lucide Icons Library -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Application JS Logic -->
+</body>
+
+</html>
